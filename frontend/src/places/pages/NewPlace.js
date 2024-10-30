@@ -41,7 +41,7 @@ const NewPlace = () => {
   const prodPlaceUrl = `https://little-mern-backend.onrender.com/api/places`;
   const fetchUrl = process.env.NODE_ENV === 'production' ? prodPlaceUrl : devPlaceUrl;
 
-  const placeSubmitHandler = async event => {
+  const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
       await sendRequest(

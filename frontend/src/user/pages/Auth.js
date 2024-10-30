@@ -58,7 +58,7 @@ const Auth = () => {
     setIsLoginMode(prevMode => !prevMode);
   };
 
-  const authSubmitHandler = async event => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
 
     const devLoginUrl = `http://localhost:3011/api/users/login`;
@@ -67,8 +67,9 @@ const Auth = () => {
 
     const devSignupUrl = `http://localhost:3011/api/users/signup`;
     const prodSignupUrl = `https://little-mern-backend.onrender.com/api/users/signup`;
-    const fetchSigninUrl = process.env.NODE_ENV === 'production' ? prodSignupUrl : devSignupUrl;
+    const fetchSignupUrl = process.env.NODE_ENV === 'production' ? prodSignupUrl : devSignupUrl;
 
+    // Check isLoginMode true (Login mode) || false (Signup mode)
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -83,11 +84,13 @@ const Auth = () => {
           }
         );
         auth.login(responseData.user.id);
-      } catch (err) {}
+      } catch (err) {
+        console.error(`\nFailed to Login user\n`);
+      }
     } else {
       try {
         const responseData = await sendRequest(
-          fetchSigninUrl,
+          fetchSignupUrl,
           'POST',
           JSON.stringify({
             name: formState.inputs.name.value,
@@ -100,7 +103,9 @@ const Auth = () => {
         );
 
         auth.login(responseData.user.id);
-      } catch (err) {}
+      } catch (err) {
+        console.error(`\nFailed to Sign Up user\n`);
+      }
     }
   };
 
