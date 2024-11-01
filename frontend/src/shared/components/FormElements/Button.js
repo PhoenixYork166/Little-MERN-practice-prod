@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import './Button.css';
 
+// Parent component
+// src/shared/components/UIElements/ErrorModal
 const Button = props => {
   if (props.href) {
     return (

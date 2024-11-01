@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
+// const { placeIdToImageUrl } = require('../util/placeIdToImageUrl');
+const { fetchImageUrl } = require('../util/fetchImageUrl');
 const Place = require('../models/place');
 const User = require('../models/user');
 
@@ -58,6 +60,9 @@ exports.getPlacesByUserId = async (req, res, next) => {
 };
 
 exports.createPlace = async (req, res, next) => {
+
+  const requestHandlerName = `\nbackend/controllers/places-controllers.js\ncreatePlace`;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
@@ -68,11 +73,21 @@ exports.createPlace = async (req, res, next) => {
   const { title, description, address, creator } = req.body;
 
   let coordinates;
+  let placeId;
   try {
-    coordinates = await getCoordsForAddress(address);
+    // Destructure 'coordinates' & 'placeId' directly into locationData
+    const locationData = await getCoordsForAddress(address);
+    coordinates = locationData.coordinates;
+    placeId = locationData.placeId;
+
   } catch (error) {
     return next(error);
   }
+
+  console.log(`\n${requestHandlerName}\nplaceId:\n${placeId}\n`);
+
+  const imageUrl = await fetchImageUrl(placeId);
+  console.log(`\n${requestHandlerName}\nimageUrl:\n${imageUrl}\n`);
 
   const createdPlace = new Place({
     title,
@@ -83,6 +98,7 @@ exports.createPlace = async (req, res, next) => {
       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg', // => File Upload module, will be replaced with real image url
     creator
   });
+
 
   let user;
   try {

@@ -107,6 +107,7 @@ const UpdatePlace = () => {
 
   return (
     <React.Fragment>
+      {/* Forwarding error from this component to <ErrorModal/> */}
       <ErrorModal error={error} onClear={clearError} />
       {!isLoading && loadedPlace && (
         <form className="place-form" onSubmit={placeUpdateSubmitHandler}>

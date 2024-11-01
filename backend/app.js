@@ -17,8 +17,11 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const isProduction = process.env.NODE_ENV === 'production' ? `https://little-mern-frontend.com` : '*';
+
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', isProduction);
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -29,6 +32,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors());
+
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 

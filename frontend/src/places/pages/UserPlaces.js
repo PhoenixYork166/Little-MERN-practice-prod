@@ -27,6 +27,7 @@ const UserPlaces = () => {
       } catch (err) {}
     };
     fetchPlaces();
+
   }, [sendRequest, userId, fetchPlaceUrl]);
 
   const placeDeletedHandler = deletedPlaceId => {
@@ -37,6 +38,7 @@ const UserPlaces = () => {
 
   return (
     <React.Fragment>
+      {/* Forwarding error from this component to <ErrorModal/> */}
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && (
         <div className="center">

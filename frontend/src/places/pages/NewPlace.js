@@ -35,6 +35,7 @@ const NewPlace = () => {
     false
   );
 
+  /* React Router DOM feature useHistory() */
   const history = useHistory();
 
   const devPlaceUrl = `http://localhost:3011/api/places`;
@@ -56,7 +57,8 @@ const NewPlace = () => {
         { 'Content-Type': 'application/json' }
       );
       history.push('/');
-    } catch (err) {}
+
+    } catch (err) {} // Error handling inside the Hook
   };
 
   return (

@@ -58,7 +58,7 @@ const Auth = () => {
     setIsLoginMode(prevMode => !prevMode);
   };
 
-  const authSubmitHandler = async (event) => {
+  const authSubmitHandler = (event) => {
     event.preventDefault();
 
     const devLoginUrl = `http://localhost:3011/api/users/login`;
@@ -71,8 +71,8 @@ const Auth = () => {
 
     // Check isLoginMode true (Login mode) || false (Signup mode)
     if (isLoginMode) {
-      try {
-        const responseData = await sendRequest(
+
+        sendRequest(
           fetchLoginUrl,
           'POST',
           JSON.stringify({
@@ -82,15 +82,13 @@ const Auth = () => {
           {
             'Content-Type': 'application/json'
           }
-        );
-        auth.login(responseData.user.id);
-      } catch (err) {
-        console.error(`\nFailed to Login user\n`);
-      }
+        )
+        .then((response) => {
+          auth.login(response.user.id);
+        })
     } else {
-      try {
-        const responseData = await sendRequest(
-          fetchSignupUrl,
+      sendRequest(
+        fetchSignupUrl,
           'POST',
           JSON.stringify({
             name: formState.inputs.name.value,
@@ -100,19 +98,19 @@ const Auth = () => {
           {
             'Content-Type': 'application/json'
           }
-        );
-
-        auth.login(responseData.user.id);
-      } catch (err) {
-        console.error(`\nFailed to Sign Up user\n`);
-      }
+        )
+      .then((response) => {
+        auth.login(response.user.id);
+      })
     }
   };
 
   return (
     <React.Fragment>
+      {/* Forwarding error from this component to <ErrorModal/> */}
       <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
+        {/* asOverlay true by default */}
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>Login Required</h2>
         <hr />

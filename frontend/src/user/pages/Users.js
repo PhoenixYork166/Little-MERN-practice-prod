@@ -10,20 +10,24 @@ const Users = () => {
   const [loadedUsers, setLoadedUsers] = useState();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUsers = () => {
 
       const devFetchUserUrl = `http://localhost:3011/api/users`;
       const prodFetchUserUrl = `https://little-mern-backend.onrender.com/api/users`;
       const fetchUserUrl = process.env.NODE_ENV === 'production' ? prodFetchUserUrl : devFetchUserUrl
       
-      try {
-        const responseData = await sendRequest(
-          fetchUserUrl
-        );
-
-        setLoadedUsers(responseData.users);
-      } catch (err) {}
+      sendRequest(fetchUserUrl)
+      .then((response) => {
+        if (response) {
+          setLoadedUsers(response.users);
+        }
+      })
+      .catch((err) => {
+        console.error(`\nError in fetching users: ${err}\n`);
+        throw err;
+      });
     };
+
     fetchUsers();
   }, [sendRequest]);
 
