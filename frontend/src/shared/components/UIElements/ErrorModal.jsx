@@ -8,7 +8,7 @@ import Button from '../FormElements/Button';
 // src/places/pages/UpdatePlace.js
 // src/places/pages/UserPlaces.js
 // src/places/pages/NewPlace.js
-const ErrorModal = props => {
+const ErrorModal = (props) => {
   return (
     <Modal
       onCancel={props.onClear}

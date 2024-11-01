@@ -28,6 +28,8 @@ const ModalOverlay = props => {
   return ReactDOM.createPortal(content, document.getElementById('modal-hook'));
 };
 
+// Parent component
+// src/shared/components/UIElements/ErrorModal.js
 const Modal = props => {
   return (
     <React.Fragment>

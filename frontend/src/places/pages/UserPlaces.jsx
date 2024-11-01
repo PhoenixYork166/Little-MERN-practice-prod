@@ -30,7 +30,7 @@ const UserPlaces = () => {
 
   }, [sendRequest, userId, fetchPlaceUrl]);
 
-  const placeDeletedHandler = deletedPlaceId => {
+  const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces(prevPlaces =>
       prevPlaces.filter(place => place.id !== deletedPlaceId)
     );

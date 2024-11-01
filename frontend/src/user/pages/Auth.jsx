@@ -5,6 +5,7 @@ import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -14,6 +15,7 @@ import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
+import { isValid } from 'ipaddr.js';
 
 const Auth = () => {
   const auth = useContext(AuthContext);
@@ -35,20 +37,28 @@ const Auth = () => {
   );
 
   const switchModeHandler = () => {
+    // Login mode
     if (!isLoginMode) {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined
+          name: undefined,
+          image: undefined // Do not show <ImageUpload /> when signed in
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
+      // Sign up mode
       setFormData(
         {
           ...formState.inputs,
           name: {
             value: '',
+            isValid: false
+          },
+          // Adding image file to be sent to Backend
+          image: {
+            value: null,
             isValid: false
           }
         },
@@ -61,6 +71,9 @@ const Auth = () => {
   const authSubmitHandler = (event) => {
     event.preventDefault();
 
+    console.log(`\nformState.inputs:`);
+    console.log(formState.inputs); // console logging useForm custom hook inputs
+
     const devLoginUrl = `http://localhost:3011/api/users/login`;
     const prodLoginUrl = `https://little-mern-backend.onrender.com/api/users/login`;
     const fetchLoginUrl = process.env.NODE_ENV === 'production' ? prodLoginUrl : devLoginUrl;
@@ -70,7 +83,7 @@ const Auth = () => {
     const fetchSignupUrl = process.env.NODE_ENV === 'production' ? prodSignupUrl : devSignupUrl;
 
     // Check isLoginMode true (Login mode) || false (Signup mode)
-    if (isLoginMode) {
+    if (isLoginMode) { // Login mode
 
         sendRequest(
           fetchLoginUrl,
@@ -86,18 +99,22 @@ const Auth = () => {
         .then((response) => {
           auth.login(response.user.id);
         })
-    } else {
+    } else { // Sign up mode
+      // For sending binary data to Backend from Browser
+      const formData = new FormData();
+      formData.append('name', formState.inputs.name.value);
+      formData.append('email', formState.inputs.email.value);
+      formData.append('password', formState.inputs.password.value);
+      formData.append('image', formState.inputs.image.value);
+
       sendRequest(
         fetchSignupUrl,
           'POST',
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          }),
-          {
-            'Content-Type': 'application/json'
-          }
+          formData, // instead of JSON.stringify({})
+          // No need to set headers
+          // {
+          //   'Content-Type': 'application/json'
+          // }
         )
       .then((response) => {
         auth.login(response.user.id);
@@ -121,11 +138,14 @@ const Auth = () => {
               id="name"
               type="text"
               label="Your Name"
-              validators={[VALIDATOR_REQUIRE()]}
+              validators={[VALIDATOR_REQUIRE(6)]}
               errorText="Please enter a name."
               onInput={inputHandler}
             />
           )}
+          {/* ImageUpload => Check 'Logged In' */}
+          {/* Binding 'inputHandler' in userForm Custom Hook as a props to <ImageUpload /> */}
+          {!isLoginMode && <ImageUpload center id="image" onInput={inputHandler} />}
           <Input
             element="input"
             id="email"
