@@ -1,4 +1,8 @@
 const uuid = require('uuid/v4');
+
+// For also deleting the Image Uploaded by Users
+const fs = require('fs');
+
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -194,10 +198,10 @@ const deletePlace = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await place.remove({session: sess});
-    place.creator.places.pull(place);
-    await place.creator.save({session: sess});
-    await sess.commitTransaction();
+    await place.remove({session: sess}); // Start MongoDB transaction
+    place.creator.places.pull(place); // remove target place from User.places[] 
+    await place.creator.save({session: sess}); // User.save() to update User.places[]
+    await sess.commitTransaction(); // commit transaction
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not delete place.',
@@ -205,6 +209,12 @@ const deletePlace = async (req, res, next) => {
     );
     return next(error);
   }
+
+  // Deleting the image in backend/uploads/images
+  const imagePath = place.image;
+  fs.unlink(imagePath, (err) => {
+    console.error(`\nFailed to delete Image uploaded by User: ${place.creator}\nError: ${err}\n`);
+  });
   
   res.status(200).json({ message: 'Deleted place.' });
 };
