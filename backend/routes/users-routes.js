@@ -6,7 +6,7 @@ const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
 
-// GET 
+// GET http://localhost:3011/api/users
 router.get('/', usersController.getUsers);
 
 // POST http://localhost:3011/api/users/signup
@@ -32,6 +32,7 @@ router.post(
   usersController.signup
 );
 
+// POST http://localhost:3011/api/users/login
 router.post('/login', usersController.login);
 
 module.exports = router;

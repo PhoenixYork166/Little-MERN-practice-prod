@@ -23,12 +23,10 @@ npm start;
 <br/>
 <h2>Data-flow illustrations for React <Auth /> 'Sign Up' vs 'Login'</h2>
 <h2>Frontend React -> Backend Node/Express REST API data-flow</h2>
-<img src="./assets/React-Express.jpeg" alt="react-to-express" />
-<br/>
-<h2>Backend Express REST API -> Node.js data-flow</h2>
-<img src="./assets/Express-Nodejs.jpeg" alt="react-to-express" />
-<br/>
 <h2>Backend Express REST API -> MongoDB Atlas data-flow</h2>
-<img src="./assets/Express-MongoDB.jpeg" alt="react-to-express" />
+<img src="./assets/Diagrams-App3-Auth-component.drawio.png" alt="react-express-node-mongodb-auth" />
 <br/>
 
+<h2>Data-flow illustrations for React <MainNavigation><NavLinks /></MainNavigation></h2>
+<img src="./assets/Diagrams-App3-NavLinks.drawio.png" alt="react-express-node-mongodb-navlinks" />
+<br/>

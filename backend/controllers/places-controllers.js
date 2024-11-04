@@ -13,7 +13,7 @@ const { printDateTime } = require('../util/printDateTime');
 const Place = require('../models/place');
 const User = require('../models/user');
 
-const getPlaceById = async (req, res, next) => {
+exports.getPlaceById = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `backend/controllers/places-controllers/getPlaceById`;
   console.log(`\n${requestHandlerName}`);
@@ -41,7 +41,8 @@ const getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) });
 };
 
-const getPlacesByUserId = async (req, res, next) => {
+// GET http://localhost:3011/api/places/user/:uid
+exports.getPlacesByUserId = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `backend/controllers/places-controllers/getPlaceByUserId`;
   console.log(`\n${requestHandlerName}`);
@@ -69,7 +70,7 @@ const getPlacesByUserId = async (req, res, next) => {
   res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) });
 };
 
-const createPlace = async (req, res, next) => {
+exports.createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -127,7 +128,7 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlace = async (req, res, next) => {
+exports.updatePlace = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `updatePlace`;
   console.log(`\n${requestHandlerName}`);
@@ -171,7 +172,7 @@ const updatePlace = async (req, res, next) => {
   res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
-const deletePlace = async (req, res, next) => {
+exports.deletePlace = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `backend/controllers/place-controllers/deletePlace`;
   console.log(`\n${requestHandlerName}`);
@@ -219,8 +220,8 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted place.' });
 };
 
-exports.getPlaceById = getPlaceById;
-exports.getPlacesByUserId = getPlacesByUserId;
-exports.createPlace = createPlace;
-exports.updatePlace = updatePlace;
-exports.deletePlace = deletePlace;
+// exports.getPlaceById = getPlaceById;
+// exports.getPlacesByUserId = getPlacesByUserId;
+// exports.createPlace = createPlace;
+// exports.updatePlace = updatePlace;
+// exports.deletePlace = deletePlace;

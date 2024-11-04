@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/:pid', placesControllers.getPlaceById);
 
+// GET http://localhost:3011/api/places/user/:uid
 router.get('/user/:uid', placesControllers.getPlacesByUserId);
 
 // POST http://localhost:3011/api/places
