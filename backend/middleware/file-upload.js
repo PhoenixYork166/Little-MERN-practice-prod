@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const uuid = require('uuid/v1'); // Ensure correct import for UUID
 const path = require('path');
-const rootDir = require('../util/path');
 
 // Mapping for file types
 const MIME_TYPE_MAP = {

@@ -4,8 +4,8 @@ const ipaddr = require('ipaddr.js');
 const whitelist = [
     '127.0.0.1', 
     '::1', // localhost IPv6
-    '216.24.57.4', // https://www.ai-recognition-frontend.com // https://ai-recognition-frontend.onrender.com
-    '0:0:0:0:0:ffff:d818:3904', // Ipv6 for https://www.ai-recognition-frontend.com // https://ai-recognition-frontend.onrender.com
+    '216.24.57.4', // https://little-mern-frontend.onrender.com
+    '0:0:0:0:0:ffff:d818:3904', // Ipv6 for https://little-mern-frontend.onrender.com
     '216.24.57.1', // onrender DNS
     '0:0:0:0:0:ffff:d818:3901', // Ipv6 for onrender DNS
 
