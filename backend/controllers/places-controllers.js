@@ -4,12 +4,15 @@ const mongoose = require('mongoose');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
-// const { placeIdToImageUrl } = require('../util/placeIdToImageUrl');
-const { fetchImageUrl } = require('../util/fetchImageUrl');
+
+const { printDateTime } = require('../util/printDateTime');
 const Place = require('../models/place');
 const User = require('../models/user');
 
-exports.getPlaceById = async (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/places-controllers/getPlaceById`;
+  console.log(`\n${requestHandlerName}`);
   const placeId = req.params.pid;
 
   let place;
@@ -34,7 +37,10 @@ exports.getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) });
 };
 
-exports.getPlacesByUserId = async (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/places-controllers/getPlaceByUserId`;
+  console.log(`\n${requestHandlerName}`);
   const userId = req.params.uid;
 
   // let places;
@@ -59,84 +65,69 @@ exports.getPlacesByUserId = async (req, res, next) => {
   res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) });
 };
 
-exports.createPlace = async (req, res, next) => {
-
-  const requestHandlerName = `\nbackend/controllers/places-controllers.js\ncreatePlace`;
-
+const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
   const { title, description, address, creator } = req.body;
 
   let coordinates;
-  let placeId;
   try {
-    // Destructure 'coordinates' & 'placeId' directly into locationData
-    const locationData = await getCoordsForAddress(address);
-    coordinates = locationData.coordinates;
-    placeId = locationData.placeId;
-
-  } catch (error) {
-    return next(error);
+    coordinates = await getCoordsForAddress(address);
+  } catch (err) {
+    console.error(err.message);
+    return next(new HttpError('Failed to find location for the provided address.', 500));
   }
 
-  console.log(`\n${requestHandlerName}\nplaceId:\n${placeId}\n`);
+  console.error(`\ncoordinates:\n`, coordinates, `\n`);
 
-  const imageUrl = await fetchImageUrl(placeId);
-  console.log(`\n${requestHandlerName}\nimageUrl:\n${imageUrl}\n`);
-
+  // Instantiate class Place{}
   const createdPlace = new Place({
     title,
     description,
     address,
     location: coordinates,
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg', // => File Upload module, will be replaced with real image url
+    image: req.file.path,
     creator
   });
-
 
   let user;
   try {
     user = await User.findById(creator);
+
+    if (!user) {
+      const error = new HttpError('Could not find user for provided id.', 404);
+      return next(error);
+    }
   } catch (err) {
-    const error = new HttpError(
-      'Creating place failed, please try again.',
-      500
-    );
-    return next(error);
+    console.error(err);
+    return next(new HttpError('Creating place failed, please try again.', 500));
   }
 
-  if (!user) {
-    const error = new HttpError('Could not find user for provided id.', 404);
-    return next(error);
-  }
-
-  console.log(user);
+  // console.log(user);
 
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await createdPlace.save({ session: sess }); 
-    user.places.push(createdPlace); 
-    await user.save({ session: sess }); 
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    const error = new HttpError(
-      'Creating place failed, please try again.',
-      500
-    );
-    return next(error);
+    console.error(err.message);
+    return next(new HttpError('Creating place failed, please try again.', 500));
   }
 
   res.status(201).json({ place: createdPlace });
 };
 
-exports.updatePlace = async (req, res, next) => {
+const updatePlace = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `updatePlace`;
+  console.log(`\n${requestHandlerName}`);
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
@@ -151,6 +142,7 @@ exports.updatePlace = async (req, res, next) => {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
+    console.error(err);
     const error = new HttpError(
       'Something went wrong, could not update place.',
       500
@@ -164,6 +156,7 @@ exports.updatePlace = async (req, res, next) => {
   try {
     await place.save();
   } catch (err) {
+    console.error(err);
     const error = new HttpError(
       'Something went wrong, could not update place.',
       500
@@ -174,13 +167,18 @@ exports.updatePlace = async (req, res, next) => {
   res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
-exports.deletePlace = async (req, res, next) => {
+const deletePlace = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/place-controllers/deletePlace`;
+  console.log(`\n${requestHandlerName}`);
+
   const placeId = req.params.pid;
 
   let place;
   try {
     place = await Place.findById(placeId).populate('creator');
   } catch (err) {
+    console.error(err);
     const error = new HttpError(
       'Something went wrong, could not delete place.',
       500
@@ -211,3 +209,8 @@ exports.deletePlace = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted place.' });
 };
 
+exports.getPlaceById = getPlaceById;
+exports.getPlacesByUserId = getPlacesByUserId;
+exports.createPlace = createPlace;
+exports.updatePlace = updatePlace;
+exports.deletePlace = deletePlace;

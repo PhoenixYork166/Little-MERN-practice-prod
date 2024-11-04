@@ -6,12 +6,15 @@ import Card from '../../shared/components/UIElements/Card';
 import './UserItem.css';
 
 const UserItem = props => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const imageUrl = isProduction ? `https://little-mern-backend.onrender.com/` : `http://localhost:3011/`;
+
   return (
     <li className="user-item">
       <Card className="user-item__content">
         <Link to={`/${props.id}/places`}>
           <div className="user-item__image">
-            <Avatar image={props.image} alt={props.name} />
+            <Avatar image={`${imageUrl}${props.image}`} alt={props.name} />
           </div>
           <div className="user-item__info">
             <h2>{props.name}</h2>

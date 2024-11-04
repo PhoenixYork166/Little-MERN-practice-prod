@@ -5,6 +5,9 @@ import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
+
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH
@@ -17,6 +20,8 @@ import './PlaceForm.css';
 const NewPlace = () => {
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  // Initial formState{}, inputHandler: false for custom hook useForm
   const [formState, inputHandler] = useForm(
     {
       title: {
@@ -30,6 +35,10 @@ const NewPlace = () => {
       address: {
         value: '',
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     },
     false
@@ -39,23 +48,27 @@ const NewPlace = () => {
   const history = useHistory();
 
   const devPlaceUrl = `http://localhost:3011/api/places`;
-  const prodPlaceUrl = `https://little-mern-backend.onrender.com/api/places`;
-  const fetchUrl = process.env.NODE_ENV === 'production' ? prodPlaceUrl : devPlaceUrl;
+    const prodPlaceUrl = `https://little-mern-backend.onrender.com/api/places`;
+    const fetchUrl = process.env.NODE_ENV === 'production' ? prodPlaceUrl : devPlaceUrl;
 
   const placeSubmitHandler = async (event) => {
-    event.preventDefault();
+    event.preventDefault();  
+
     try {
-      await sendRequest(
-        fetchUrl,
-        'POST',
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId
-        }),
-        { 'Content-Type': 'application/json' }
-      );
+      const formData = new FormData();
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creator', auth.userId);
+      formData.append('image', formState.inputs.image.value);
+          
+      /* Logging formData key-value pairs */
+      for (let [key, value] of formData.entries()) {
+        console.log(`\nformData:\n`, key, value);
+      }     
+      
+      // No need to send Headers when using FormData
+      await sendRequest(fetchUrl, 'POST', formData);      
       history.push('/');
 
     } catch (err) {} // Error handling inside the Hook
@@ -90,6 +103,11 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please enter a valid address."
           onInput={inputHandler}
+        />
+        <ImageUpload 
+          id="image" 
+          onInput={inputHandler} 
+          errorText="Please provide an image." 
         />
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE

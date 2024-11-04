@@ -17,13 +17,13 @@ async function getCoordsForAddress(address) {
     console.log(`\nResponse for src/util/location\ngetCoordsForAddress(${address}):\n`, data.results[0], `\n`);
 
     if (!data || data.status === 'ZERO_RESULTS') {
-      throw new HttpError('Could not find location for the specified address.', 422);
+      const error = new HttpError('Could not find location for the specified address.', 422);
+      throw error;
     }
 
     const coordinates = data.results[0].geometry.location;
-    const placeId = data.results[0].place_id;
 
-    return { coordinates, placeId };
+    return coordinates;
   } catch (error) {
     if (error.response) {
       // Handle responses with a status code indicating an error

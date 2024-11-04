@@ -1,9 +1,14 @@
 const { validationResult } = require('express-validator');
+const { printDateTime } = require('../util/printDateTime');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
-exports.getUsers = async (req, res, next) => {
+const getUsers = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/users-controllers.js\nexports.getUsers`;
+  console.log(`\n${requestHandlerName}:\n`);
+
   let users;
   try {
     users = await User.find({}, '-password');
@@ -17,19 +22,27 @@ exports.getUsers = async (req, res, next) => {
   res.json({ users: users.map(user => user.toObject({ getters: true })) });
 };
 
-exports.signup = async (req, res, next) => {
+const signup = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/users-controllers.js\nexports.signup`;
+  console.log(`\n${requestHandlerName}:\n`);
+
+  // Express-validator => Validation Error
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
+
+  /* Storing Image file on User who created it */
   const { name, email, password } = req.body;
 
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
+    console.error(`\nError Signing up a user:\n`, err, `\n`);
     const error = new HttpError(
       'Signing up failed, please try again later.',
       500
@@ -48,7 +61,8 @@ exports.signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+    // image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+    image: req.file.path,
     password,
     places: []
   });
@@ -66,7 +80,11 @@ exports.signup = async (req, res, next) => {
   res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 };
 
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
+  printDateTime();
+  const requestHandlerName = `backend/controllers/users-controllers.js\nexports.login`;
+  console.log(`\n${requestHandlerName}:\n`);
+
   const { email, password } = req.body;
 
   let existingUser;
@@ -95,3 +113,6 @@ exports.login = async (req, res, next) => {
   });
 };
 
+exports.getUsers = getUsers;
+exports.signup = signup;
+exports.login = login;

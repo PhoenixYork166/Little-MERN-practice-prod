@@ -44,6 +44,9 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
+  const isProduction = process.env.NODE_ENV === 'production';
+  const imageHost = isProduction ? `https://little-mern-backend.onrender.com/` : `http://localhost:3011/`
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -55,8 +58,10 @@ const PlaceItem = (props) => {
         footerClass="place-item__modal-actions"
         footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
       >
-        <div className="map-container">
-          <Map center={props.coordinates} zoom={16} />
+        <div className="map-container" style={{padding: "5px"}}>
+          {/* <Map center={props.coordinates} zoom={16} /> */}
+          <iframe title="map" width="100%" height="100%" frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0"
+          src={'https://maps.google.com/maps?q=' + props.coordinates.lat.toString() + ',' + props.coordinates.lng.toString() + '&t=&z=15&ie=UTF8&iwloc=&output=embed'}></iframe>
         </div>
       </Modal>
       <Modal
@@ -84,7 +89,9 @@ const PlaceItem = (props) => {
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={props.image} alt={props.title} />
+
+            {/* <img src={`${imageHost}${props.image}`} alt={props.title} /> */}
+            <img src={`${imageHost}${props.image}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>

@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import './ImageUpload.css';
 import Button from './Button';
 
+// Parent component
+// src/user/pages/Auth.jsx
 const ImageUpload = (props) => {
     const [file, setFile] = useState();
     const [previewUrl, setPreviewUrl] = useState();
@@ -11,21 +13,18 @@ const ImageUpload = (props) => {
 
     const filePickerRef = useRef(); // storing filePicker as a Reference
 
+    /* Whenever an Image file is mounted to DOM */
     /* Listen on file changes => re-render */
     useEffect(() => {
         if (!file) {
             return;
         }
 
-        // Using FileReader clunky API...
         const fileReader = new FileReader();
-        
-        // Execute () => {} whenever FileReader loads a file
         fileReader.onload = () => {
-            // setState for previewUrl
             setPreviewUrl(fileReader.result);
         };
-
+        
         fileReader.readAsDataURL(file);
     }, [file]);
 
@@ -33,27 +32,29 @@ const ImageUpload = (props) => {
         let pickedFile;
         let fileIsValid = isValid;
 
-        console.log(`\n${callbackName}\npickedHandler:\nevent.target.file`);
-        console.log(event.target.files);
+        console.log(`\n${callbackName}\npickedHandler:\nevent.target.files[0]`);
+        console.log(event.target.files[0]);
 
         // Only handle 1 file at a time
         if (event.target.files && event.target.files.length === 1) {
-            const pickedFile = event.target.files[0];
+            pickedFile = event.target.files[0];
+            console.log(`\npickedFile: `, pickedFile, `\n`);
             setFile(pickedFile);
             setIsValid(true);
+            
             fileIsValid = true;
-            // return;
         } else {
-            // If event.target.files does not exist => setIsValid(false)
             setIsValid(false);
+            
             fileIsValid = false;
         }
 
         props.onInput(props.id, pickedFile, fileIsValid);
     };
 
+    /* onClick handler */
     const pickImageHandler = () => {
-        filePickerRef.current.click();
+        filePickerRef.current.click(); // Open File Selector in Frontend
     };
 
     return(
@@ -61,17 +62,17 @@ const ImageUpload = (props) => {
             <div className="form-control">
                 {/* still exists in DOM tree */}
                 <input 
+                    id={props.id} 
                     /** Must declare ref props! **/
                     ref={filePickerRef}
-                    id={props.id} 
-                    style={{display: 'none',}} 
+                    style={{display: 'none', }} 
                     type="file" 
                     accept=".jpg,.png,.jpeg"
                     onChange={pickedHandler}
                 />
                 <div className={`image-upload ${props.center && 'center'}`}>
                     {/* Conditional rendering */}
-                    {previewUrl && <img src={previewUrl} alt="Preview" /> }
+                    {previewUrl && <img id="preview-url" src={previewUrl} alt="Preview" /> }
                     {!previewUrl && <p>Please pick an image.</p>}
                 </div>
                 <Button 

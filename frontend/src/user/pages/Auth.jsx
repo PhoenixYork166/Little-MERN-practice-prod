@@ -37,7 +37,7 @@ const Auth = () => {
   );
 
   const switchModeHandler = () => {
-    // Login mode
+    // User Logged In mode
     if (!isLoginMode) {
       setFormData(
         {
@@ -48,7 +48,7 @@ const Auth = () => {
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
-      // Sign up mode
+      // User Signed up mode
       setFormData(
         {
           ...formState.inputs,
@@ -58,7 +58,7 @@ const Auth = () => {
           },
           // Adding image file to be sent to Backend
           image: {
-            value: null,
+            value: null, // storing Image file value
             isValid: false
           }
         },
@@ -68,9 +68,8 @@ const Auth = () => {
     setIsLoginMode(prevMode => !prevMode);
   };
 
-  const authSubmitHandler = (event) => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
-
     console.log(`\nformState.inputs:`);
     console.log(formState.inputs); // console logging useForm custom hook inputs
 
@@ -84,8 +83,8 @@ const Auth = () => {
 
     // Check isLoginMode true (Login mode) || false (Signup mode)
     if (isLoginMode) { // Login mode
-
-        sendRequest(
+      try {
+        const responseData = await sendRequest(
           fetchLoginUrl,
           'POST',
           JSON.stringify({
@@ -95,30 +94,30 @@ const Auth = () => {
           {
             'Content-Type': 'application/json'
           }
-        )
-        .then((response) => {
-          auth.login(response.user.id);
-        })
-    } else { // Sign up mode
-      // For sending binary data to Backend from Browser
-      const formData = new FormData();
-      formData.append('name', formState.inputs.name.value);
-      formData.append('email', formState.inputs.email.value);
-      formData.append('password', formState.inputs.password.value);
-      formData.append('image', formState.inputs.image.value);
+        );
+        auth.login(responseData.user.id); // Log user in
+      } catch (err) {}
+    } else { // Sign Up mode
+      try {       
+        const formData = new FormData();
+        formData.append('name', formState.inputs.name.value);
+        formData.append('email', formState.inputs.email.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
 
-      sendRequest(
+        /* Logging formData key-value pairs */
+      for (let [key, value] of formData.entries()) {
+        console.log(`\nformData:\n`, key, value);
+      }     
+
+      const responseData = await sendRequest(
         fetchSignupUrl,
-          'POST',
-          formData, // instead of JSON.stringify({})
-          // No need to set headers
-          // {
-          //   'Content-Type': 'application/json'
-          // }
-        )
-      .then((response) => {
-        auth.login(response.user.id);
-      })
+        'POST',
+        formData // No need to send Headers when using FormData
+      );
+
+        auth.login(responseData.user.id); // Log user in after 'sign up'
+      } catch (err) {}
     }
   };
 
@@ -132,6 +131,7 @@ const Auth = () => {
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
+          {/* User to Sign Up  */}
           {!isLoginMode && (
             <Input
               element="input"
@@ -143,30 +143,35 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
-          {/* ImageUpload => Check 'Logged In' */}
-          {/* Binding 'inputHandler' in userForm Custom Hook as a props to <ImageUpload /> */}
-          {!isLoginMode && <ImageUpload center id="image" onInput={inputHandler} />}
-          <Input
-            element="input"
-            id="email"
-            type="email"
-            label="E-Mail"
-            validators={[VALIDATOR_EMAIL()]}
-            errorText="Please enter a valid email address."
-            onInput={inputHandler}
-          />
-          <Input
-            element="input"
-            id="password"
-            type="password"
-            label="Password"
-            validators={[VALIDATOR_MINLENGTH(6)]}
-            errorText="Please enter a valid password, at least 6 characters."
-            onInput={inputHandler}
-          />
-          <Button type="submit" disabled={!formState.isValid}>
+            {/* ImageUpload */}
+            {/* Only Shows Up when User Sign Up */}
+            {/* Binding 'inputHandler' in userForm Custom Hook as a props to <ImageUpload /> */}
+            {!isLoginMode && 
+            <ImageUpload center id="image" onInput={inputHandler} errorText="Please provide an image" />
+            }
+
+            <Input
+              element="input"
+              id="email"
+              type="email"
+              label="E-Mail"
+              validators={[VALIDATOR_EMAIL()]}
+              errorText="Please enter a valid email address."
+              onInput={inputHandler}
+            />
+
+            <Input
+              element="input"
+              id="password"
+              type="password"
+              label="Password"
+              validators={[VALIDATOR_MINLENGTH(6)]}
+              errorText="Please enter a valid password, at least 6 characters."
+              onInput={inputHandler}
+            />
+            <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? 'LOGIN' : 'SIGNUP'}
-          </Button>
+            </Button>
         </form>
         <Button inverse onClick={switchModeHandler}>
           SWITCH TO {isLoginMode ? 'SIGNUP' : 'LOGIN'}

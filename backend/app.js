@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,6 +9,11 @@ const { mongoose_uri } = require('./util/database');
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 const HttpError = require('./models/http-error');
+/* CORS setup Middleware */
+const corsSetup = require('./middleware/cors-setup');
+/* uploadImageErrorHandler Middleware */
+const uploadImageErrorHandler = require('./middleware/uploadImageErrorHandler');
+const notFoundErrorHandler = require('./middleware/404');
 
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
@@ -15,39 +22,26 @@ const { printDateTime } = require('./util/printDateTime');
 
 const app = express();
 
-app.use(bodyParser.json());
+// bodyParser
+app.use(bodyParser.json({ limit: '100mb' }));
 
-const isProduction = process.env.NODE_ENV === 'production' ? `https://little-mern-frontend.com` : '*';
+/* Serving Images Statically */
+// app.use('/route', middleware) => points to backend/uploads/images folder
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
-app.use((req, res, next) => {
-  // res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Origin', isProduction);
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
-
-  next();
-});
-
+app.use(corsSetup);
 app.use(cors());
 
+/* routes/places-routes.js */
 app.use('/api/places', placesRoutes);
+/* routes/users-routes.js */
 app.use('/api/users', usersRoutes);
 
-app.use((req, res, next) => {
-  const error = new HttpError('Could not find this route.', 404);
-  throw error;
-});
+/* 404 notFoundErrorHandler Middleware */
+app.use(notFoundErrorHandler);
 
-app.use((error, req, res, next) => {
-  if (res.headerSent) {
-    return next(error);
-  }
-  res.status(error.code || 500);
-  res.json({ message: error.message || 'An unknown error occurred!' });
-});
+/* uploadImage Error Handler Middleware */
+app.use(uploadImageErrorHandler);
 
 const port = process.env.PORT || 3011;
 
