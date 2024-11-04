@@ -128,6 +128,7 @@ exports.createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
+// PATCH http://localhost:3011/api/places/:pid
 exports.updatePlace = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `updatePlace`;
@@ -172,6 +173,7 @@ exports.updatePlace = async (req, res, next) => {
   res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
+// DELETE http://localhost:3011/api/places/:pid
 exports.deletePlace = async (req, res, next) => {
   printDateTime();
   const requestHandlerName = `backend/controllers/place-controllers/deletePlace`;
@@ -217,7 +219,11 @@ exports.deletePlace = async (req, res, next) => {
     console.error(`\nFailed to delete Image uploaded by User: ${place.creator}\nError: ${err}\n`);
   });
   
-  res.status(200).json({ message: 'Deleted place.' });
+  res.status(200).json({ 
+    success: true, 
+    status: { code: 200 },
+    message: 'Deleted place.' 
+  });
 };
 
 // exports.getPlaceById = getPlaceById;

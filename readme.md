@@ -22,11 +22,17 @@ npm start;
 <h2>Users can upload their profile pic during 'Sign Up'</h2>
 <br/>
 <h2>Data-flow illustrations for React <Auth /> 'Sign Up' vs 'Login'</h2>
+<h2>Frontend React http://localhost:3020</h2>
 <h2>Frontend React -> Backend Node/Express REST API data-flow</h2>
 <h2>Backend Express REST API -> MongoDB Atlas data-flow</h2>
 <img src="./assets/Diagrams-App3-Auth-component.drawio.png" alt="react-express-node-mongodb-auth" />
 <br/>
 
-<h2>Data-flow illustrations for React <MainNavigation><NavLinks /></MainNavigation></h2>
+<h2>Data-flow illustrations for React <MainNavigation><NavLinks/></MainNavigation></h2>
+<h2>Frontend React http://localhost:3020/:uid/places</h2>
 <img src="./assets/Diagrams-App3-NavLinks.drawio.png" alt="react-express-node-mongodb-navlinks" />
+<br/>
+
+<h2>Data-flow illustrations for React -> Express -> Node.js -> MongoDB regarding<UserPlaces><PlaceList/></UserPlaces></h2>
+<img src="./assets/Diagrams-App3-UserPlaces.drawio.png" alt="react-express-node-mongodb-navlinks" />
 <br/>

@@ -27,6 +27,7 @@ router.post(
   placesControllers.createPlace
 );
 
+// PATCH http://localhost:3011/api/places/:pid
 router.patch(
   '/:pid',
   [
