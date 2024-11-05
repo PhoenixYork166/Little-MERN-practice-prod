@@ -1,9 +1,13 @@
 const { validationResult } = require('express-validator');
 const { printDateTime } = require('../util/printDateTime');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+
+const rootDir = require('../util/path');
+require('dotenv').config({ path: `${rootDir}/.env`});
 
 exports.getUsers = async (req, res, next) => {
   printDateTime();
@@ -53,23 +57,17 @@ exports.signup = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return next(new HttpError(`Invalid inputs passed, please check your data.`, 422));
   }
-
   /* Storing Image file on User who created it */
   const { name, email, password } = req.body;
 
-  // Check if user already exists
+  /* Promise chaining */
   User.findOne({ email: email })
   .then((existingUser) => {
     if (existingUser) {
-      return res.status(422).json({
-        success: false,
-        status: { code: 422 },
-        message: `User already exists, please login instead.`
-      })
+      return res.status(422).json({ success: false, status: { code: 422 }, message: `User already exists, please login instead.` });
     }
 
-    // Hashing password, 12 salt-round
-    return bcrypt.hash(password, 12);
+    return bcrypt.hash(password, 12); // hasing password, salt-round: 10
   })
   .then((hashedPassword) => {
     // Create user instance
@@ -84,10 +82,20 @@ exports.signup = async (req, res, next) => {
     return createdUser.save();
   })
   .then((createdUser) => {
+    let token;
+    // jwt.sign(payload(string | object | Buffer), jwtKey, options{});
+    token = jwt.sign({
+      userId: createdUser.id, // encoding userId
+      email: createdUser.email // encoding email
+    }, process.env.JWT_SECRET, // .env file storing JWT_SECRET
+    { expiresIn: '1h' } // jwt options
+    );
+
     return res.status(201).json({
       success: true, 
       status: { code: 201 },
-      user: createdUser.toObject({ getters: true }),
+      // user: createdUser.toObject({ getters: true }),
+      user: { userId: createdUser.id, email: createdUser.email, token: token },
       message: `Registered user!`
     });
   })
@@ -99,7 +107,7 @@ exports.signup = async (req, res, next) => {
       message: `Sign up/Registration failed. Please re-try`
     })
   });
-
+  
   /* try {} catch {} */
   /*
   let existingUser;
@@ -143,7 +151,26 @@ exports.signup = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email }, // encoding userId & email
+      process.env.JWT_SECRET, // backend/.env file JWT_SECRET
+      { expiresIn: '1h' }
+    )
+  } catch (err) {
+    console.error(`\nFailed to generate a JWT for user being signed up.\nError: ${err}\n`);
+    return res.status(500).json({ success: false, status: { code: 500 }, message: `Failed to Sign up a user, please try again.`});
+  }
+
+  // return res.status(201).json({ userId: createdUser.id, email: createdUser.email, token: token });
+  return res.status(201).json({ 
+    success: true,
+    status: { code: 201 },
+    // user: createdUser.toObject({ getters: true }),
+    user: { userId: createdUser.id, email: createdUser.email, token: token },
+    message: `Succeeded in signing up a user.`
+  });
   */
 };
 
@@ -164,14 +191,13 @@ exports.login = async (req, res, next) => {
   User.findOne({ email: email })
   .then((existingUser) => {
     if (!existingUser) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
-        status: { code: 401 },
+        status: { code: 403 },
         message: `Invalid credentials, could not log in.`
       });
     }
 
-    // If user could be found using unique e-mail, bcrypt.compare(password, hashedPassword)
     return bcrypt.compare(password, existingUser.password)
     .then((isValidPassword) => { // boolean
       if (!isValidPassword) {
@@ -181,22 +207,40 @@ exports.login = async (req, res, next) => {
           message: `Invalid credentials, could not log in.`
         });
       }
-      // If password is valid, send response to Frontend
+
+      let token;
+      // jwt.sign((string | object | Buffer), jwtKey, options{});
+      token = jwt.sign({
+        userId: existingUser.id, // encoding userId
+        email: existingUser.email // encoding email
+      }, process.env.JWT_SECRET, // .env file storing JWT_SECRET
+      { expiresIn: '1h' } // jwt options
+      );
+
       return res.status(201).json({
         success: true,
         status: { code: 201 },
-        user: existingUser.toObject({ getters: true }),
+        // user: existingUser.toObject({ getters: true }),
+        user: { userId: existingUser.id, email: existingUser.email, token: token },
         message: `Logged in!`
       });
     })
     .catch((err) => {
-      console.error(`\nError in loggin in user:\nemail: ${email}\n`);
+      console.error(`\nError in comparing user's hashed password\nemail: ${email}\nError:\n${err}\n`);
       return res.status(500).json({
         success: false,
         status: { code: 500 },
         message: `Failed to log in user with email: ${email}.`
       });
     })
+  })
+  .catch((err) => {
+    console.error(`\nError in logging in a user\nMongoDB operation failed\nemail: ${email}\nError:\n${err}\n`);
+      return res.status(500).json({
+        success: false,
+        status: { code: 500 },
+        message: `Failed to log in user with email: ${email}.`
+    });
   });
 
   /* try{} catch {} */
@@ -210,7 +254,7 @@ exports.login = async (req, res, next) => {
   }
 
   if (!existingUser) {
-    const error = new HttpError(`Invalid credentials, could not log you in.`, 401);
+    const error = new HttpError(`Invalid credentials, could not log you in.`, 403);
     return next(error);
   }
 

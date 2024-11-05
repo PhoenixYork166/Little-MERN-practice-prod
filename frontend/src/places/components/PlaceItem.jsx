@@ -35,10 +35,18 @@ const PlaceItem = (props) => {
     const prodPlaceItemUrl = `https://little-mern-backend.onrender.com/${props.id}`;
     const fetchPlaceItemUrl = process.env.NODE_ENV === 'production' ? prodPlaceItemUrl : devPlaceItemUrl;
 
+    console.log(`\nAttaching auth.token from <AuthContext />:\n`, auth.token, `\n`);
+    console.log(`\n\n`,`Token ${auth.token}`, `\n\n`);
+
     try {
       await sendRequest(
-        fetchPlaceItemUrl,
-        'DELETE'
+        fetchPlaceItemUrl, // url
+        'DELETE', // method 
+        null, // body
+        // header
+        {
+          Authorization: `Bearer ${auth.token}`
+        }
       );
       props.onDelete(props.id);
     } catch (err) {}

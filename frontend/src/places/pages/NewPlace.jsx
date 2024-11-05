@@ -67,8 +67,16 @@ const NewPlace = () => {
         console.log(`\nformData:\n`, key, value);
       }     
       
+      console.log(`\nAttaching auth.token from <AuthContext />:\n`, auth.token, `\n`);
+      console.log(`\n\n`,`Bearer ${auth.token}`, `\n\n`);
+
       // No need to send Headers when using FormData
-      await sendRequest(fetchUrl, 'POST', formData);      
+      await sendRequest(fetchUrl, 
+        'POST', 
+        formData, {
+        Authorization: `Bearer ${auth.token}`
+      }
+      );      
       history.push('/');
 
     } catch (err) {} // Error handling inside the Hook

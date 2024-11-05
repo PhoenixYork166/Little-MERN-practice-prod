@@ -95,7 +95,16 @@ const Auth = () => {
             'Content-Type': 'application/json'
           }
         );
-        auth.login(responseData.user.id); // Log user in
+        // Log User In
+        // auth.login(responseData.user.id);
+        // return res.status(201).json({
+        //   success: true,
+        //   status: { code: 201 },
+        //   // user: existingUser.toObject({ getters: true }),
+        //   user: { userId: existingUser.id, email: existingUser.email, token: token },
+        //   message: `Logged in!`
+        // });
+        auth.login(responseData.user.userId, responseData.user.token);
       } catch (err) {}
     } else { // Sign Up mode
       try {       
@@ -115,8 +124,8 @@ const Auth = () => {
         'POST',
         formData // No need to send Headers when using FormData
       );
-
-        auth.login(responseData.user.id); // Log user in after 'sign up'
+        auth.login(responseData.user.userId, responseData.user.token);
+        // auth.login(responseData.user.id); // Log user in after 'sign up'
       } catch (err) {}
     }
   };

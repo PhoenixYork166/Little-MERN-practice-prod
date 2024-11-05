@@ -73,14 +73,16 @@ const UpdatePlace = () => {
     try {
       
       await sendRequest(
-        fetchPlaceUrl,
-        'PATCH',
-        JSON.stringify({
+        fetchPlaceUrl, // url
+        'PATCH', // method
+        JSON.stringify({ // body
           title: formState.inputs.title.value,
           description: formState.inputs.description.value
         }),
+        // headers
         {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.token}`
         }
       );
       history.push('/' + auth.userId + '/places');

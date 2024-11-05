@@ -148,6 +148,7 @@ exports.getPlacesByUserId = async (req, res, next) => {
   */
 };
 
+// POST http://localhost:3011/api/places
 exports.createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -219,26 +220,30 @@ exports.updatePlace = async (req, res, next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
+  if (!title || !description || !placeId) {
+    return res.status(422).json({ success: false, status: { code: 422 }, message: `Invalid inputs`});
+  }
+
   let place;
   try {
     place = await Place.findById(placeId);
+    if (!place) {
+      return res.status(500).json({ success: false, status: { code: 500 }, message: `Could not find a place for the provided placeId: ${placeId}`});
+    }
   } catch (err) {
     console.error(err);
-    const error = new HttpError(
-      'Something went wrong, could not update place.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not update place.', 500));
   }
 
+  if (place.creator.toString() !== req.userData.userId) {
+    return res.status(403).json({ success: false, status: { code: 403 }, message: `Not allowed to edit this place created by others.`})
+  }
   place.title = title;
   place.description = description;
 
@@ -246,11 +251,7 @@ exports.updatePlace = async (req, res, next) => {
     await place.save();
   } catch (err) {
     console.error(err);
-    const error = new HttpError(
-      'Something went wrong, could not update place.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not update place.', 500));
   }
 
   return res.status(201).json({ 
@@ -271,19 +272,19 @@ exports.deletePlace = async (req, res, next) => {
 
   let place;
   try {
+    // .populate('creator') creator field holds the full user{}
     place = await Place.findById(placeId).populate('creator');
   } catch (err) {
     console.error(err);
-    const error = new HttpError(
-      'Something went wrong, could not delete place.',
-      500
-    );
-    return next(error);
+    return next(HttpError('Something went wrong, could not delete place.', 500 ));
   }
 
   if (!place) {
-    const error = new HttpError('Could not find place for this id.', 404);
-    return next(error);
+    return next(new HttpError('Could not find place for this id.', 404));
+  }
+
+  if (place.creator.id !== req.userData.userId) {
+    return res.status(403).json({ success: false, status: { code: 403 }, message: `Not allowed to delete this place created by others.`})
   }
 
   try {
@@ -294,11 +295,8 @@ exports.deletePlace = async (req, res, next) => {
     await place.creator.save({session: sess}); // User.save() to update User.places[]
     await sess.commitTransaction(); // commit transaction
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete place.',
-      500
-    );
-    return next(error);
+    console.error(`\nError in deleting a place\nplaceId: ${placeId}\nError: ${err}\n`);
+    return next(new HttpError('Something went wrong, could not delete place.', 500));
   }
 
   // Deleting the image in backend/uploads/images

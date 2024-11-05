@@ -26,6 +26,7 @@ export const useHttpClient = () => {
         });
 
         const responseData = await response.json();
+        console.log(`\nfrontend/src/shared/hooks/http-hook.jsx\nresponseData:\n`, responseData, `\n`);
 
         // Removing the currently activeHttpRequest controller from [] for this specific request
         activeHttpRequests.current = activeHttpRequests.current.filter(
