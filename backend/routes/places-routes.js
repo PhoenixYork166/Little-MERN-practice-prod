@@ -6,6 +6,7 @@ const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
 
+// GET http://localhost:3011/api/places/:pid
 router.get('/:pid', placesControllers.getPlaceById);
 
 // GET http://localhost:3011/api/places/user/:uid
@@ -39,6 +40,7 @@ router.patch(
   placesControllers.updatePlace
 );
 
+// DELETE http://localhost:3011/api/places/:pid
 router.delete('/:pid', placesControllers.deletePlace);
 
 module.exports = router;
