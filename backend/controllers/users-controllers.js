@@ -10,6 +10,22 @@ exports.getUsers = async (req, res, next) => {
   const requestHandlerName = `backend/controllers/users-controllers.js\nexports.getUsers`;
   console.log(`\n${requestHandlerName}:\n`);
 
+  /* Promise chaining */
+  User.find({}, '-password')
+  .then((users) => {
+    const userObjects = users.map((user) => user.toObject({ getters: true }));
+    
+    return res.status(201).json({ users: userObjects });
+  })
+  .catch((err) => {
+    console.error(`\nFailed to fetch users, please try again\nError: ${err}\n`);
+    return res.status(500).json({
+      success: false,
+      status: { code: 500 },
+      message: `Failed to fetch users, please try again`
+    })
+  })
+  /* try{} catch {}
   let users;
   try {
     users = await User.find({}, '-password');
@@ -21,7 +37,10 @@ exports.getUsers = async (req, res, next) => {
     return next(error);
   }
   
-  res.json({ users: users.map(user => user.toObject({ getters: true })) });
+  return res.status(201).json({ 
+    users: users.map(user => user.toObject({ getters: true })) 
+  });
+  */
 };
 
 exports.signup = async (req, res, next) => {
@@ -66,7 +85,10 @@ exports.signup = async (req, res, next) => {
   })
   .then((createdUser) => {
     return res.status(201).json({
-      user: createdUser.toObject({ getters: true })
+      success: true, 
+      status: { code: 201 },
+      user: createdUser.toObject({ getters: true }),
+      message: `Registered user!`
     });
   })
   .catch((err) => {

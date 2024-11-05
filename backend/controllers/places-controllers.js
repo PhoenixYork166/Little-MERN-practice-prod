@@ -19,6 +19,42 @@ exports.getPlaceById = async (req, res, next) => {
   console.log(`\n${requestHandlerName}`);
   const placeId = req.params.pid;
 
+  if (!placeId) {
+    return res.status(422).json({
+      success: false,
+      status: { code: 422 },
+      message: `Undefined placeId: ${placeId}`
+    });
+  }
+
+  /* Promise chaining */
+  Place.findById(placeId)
+  .then((place) => {
+    if (!place) {
+      return res.status(404).json({
+        success: false,
+        status: { code: 404 },
+        message: `Could not find place for provided placeId: ${placeId}`
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      status: { code: 201 },
+      place: place.toObject({ getters: true }),
+      message: `Place found using placeId: ${placeId}`
+    })
+  })
+  .catch((err) => {
+    console.error(`\nFailed to find the place\nplaceId: ${placeId}\nError: ${err}\n`);
+    return res.status(500).json({
+      success: false,
+      status: { code: 500 },
+      message: `Failed to find the place with placeId: ${placeId}`
+    })
+  });
+
+  /* try{} catch {}
   let place;
   try {
     place = await Place.findById(placeId);
@@ -38,7 +74,8 @@ exports.getPlaceById = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ place: place.toObject({ getters: true }) });
+  return res.status(201).json({ place: place.toObject({ getters: true }) });
+  */
 };
 
 // GET http://localhost:3011/api/places/user/:uid
@@ -48,6 +85,44 @@ exports.getPlacesByUserId = async (req, res, next) => {
   console.log(`\n${requestHandlerName}`);
   const userId = req.params.uid;
 
+  if (!userId) {
+    return res.status(422).json({
+      success: false,
+      status: { code: 422 },
+      message: `Undefined userId: ${userId}`
+    });
+  }
+
+  /* Promise chaining */
+  User.findById(userId).populate('places')
+  .then((userWithPlaces) => {
+    if (!userWithPlaces || userWithPlaces.places.length === 0) {
+      return res.status(404).json({
+        success: false,
+        status: { code: 404 },
+        message: `Could not find places for the provided userId: ${userId}`
+      });
+    }
+    console.log(`\nuserWithPlaces:\n${userWithPlaces}\n`);
+    return res.status(201).json({
+      success: true,
+      status: { code: 201 },
+      places: userWithPlaces.places.map((place) => {
+        return place.toObject({ getters: true })
+      }),
+      message: `Found places for the provided userId: ${userId}`
+    });
+  })
+  .catch((err) => {
+    console.error(`\nFailed to fetch places, please try again\nError: ${err}\n`);
+    return res.status(500).json({
+      success: false,
+      status: { code: 500 },
+      message: `Failed to fetch places, please try again`
+    });
+  });
+
+  /* try{} catch{} 
   // let places;
   let userWithPlaces;
   try {
@@ -67,7 +142,10 @@ exports.getPlacesByUserId = async (req, res, next) => {
     );
   }
 
-  res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) });
+  return res.status(201).json({ 
+    places: userWithPlaces.places.map(place => place.toObject({ getters: true })) 
+  });
+  */
 };
 
 exports.createPlace = async (req, res, next) => {
@@ -125,7 +203,12 @@ exports.createPlace = async (req, res, next) => {
     return next(new HttpError('Creating place failed, please try again.', 500));
   }
 
-  res.status(201).json({ place: createdPlace });
+  return res.status(201).json({ 
+    success: true,
+    status: { code: 201 },
+    place: createdPlace,
+    message: `A new place has been created.`
+  });
 };
 
 // PATCH http://localhost:3011/api/places/:pid
@@ -170,7 +253,12 @@ exports.updatePlace = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ place: place.toObject({ getters: true }) });
+  return res.status(201).json({ 
+    sucess: true,
+    status: { code: 201 },
+    place: place.toObject({ getters: true }),
+    message: `Place has been updated.` 
+  });
 };
 
 // DELETE http://localhost:3011/api/places/:pid
@@ -219,15 +307,9 @@ exports.deletePlace = async (req, res, next) => {
     console.error(`\nFailed to delete Image uploaded by User: ${place.creator}\nError: ${err}\n`);
   });
   
-  res.status(200).json({ 
+  return res.status(201).json({ 
     success: true, 
-    status: { code: 200 },
-    message: 'Deleted place.' 
+    status: { code: 201 },
+    message: `Deleted place. placeId: ${placeId}` 
   });
 };
-
-// exports.getPlaceById = getPlaceById;
-// exports.getPlacesByUserId = getPlacesByUserId;
-// exports.createPlace = createPlace;
-// exports.updatePlace = updatePlace;
-// exports.deletePlace = deletePlace;
