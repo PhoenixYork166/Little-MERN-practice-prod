@@ -163,7 +163,8 @@ exports.login = async (req, res, next) => {
       return res.status(201).json({
         success: true,
         status: { code: 201 },
-        user: existingUser.toObject({ getters: true })
+        user: existingUser.toObject({ getters: true }),
+        message: `Logged in!`
       });
     })
     .catch((err) => {
