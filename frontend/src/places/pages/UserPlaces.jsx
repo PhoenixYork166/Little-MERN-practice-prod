@@ -13,7 +13,7 @@ const UserPlaces = () => {
   const userId = useParams().userId;
 
   const devFetchUserPlaceUrl = `http://localhost:3011/api/places/user/${userId}`;
-    const prodFetchUserPlaceUrl = `https://little-mern-backend.onrender.com/api/places/user/${userId}`;
+    const prodFetchUserPlaceUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/places/user/${userId}`;
 
     const fetchPlaceUrl = process.env.NODE_ENV === 'production' ? prodFetchUserPlaceUrl : devFetchUserPlaceUrl;
 

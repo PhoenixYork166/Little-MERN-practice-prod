@@ -29,8 +29,28 @@ app.use(bodyParser.json({ limit: '100mb' }));
 // app.use('/route', middleware) => points to backend/uploads/images folder
 app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
-app.use(corsSetup);
-app.use(cors());
+/* CORS */
+const corsOptions = {
+  origin: function (origin, callback) {
+      const allowedOrigins = ['http://localhost:3020', 'http://localhost:3000'];
+
+      if (process.env.NODE_ENV === 'production') {
+          allowedOrigins.push('https://little-mern-react.onrender.com')
+      }
+      if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+      } else {
+          callback(new Error(`\nNot allowed by CORS`));
+      }
+  },
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204,
+  credentials: true, // to support session cookies
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+// app.use(corsSetup);
+// app.use(cors());
 
 /* routes/places-routes.js */
 app.use('/api/places', placesRoutes);

@@ -32,7 +32,7 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
 
     const devPlaceItemUrl = `http://localhost:3011/api/places/${props.id}`;
-    const prodPlaceItemUrl = `https://little-mern-backend.onrender.com/${props.id}`;
+    const prodPlaceItemUrl = `https://little-mern-nodejs-mongodb.onrender.com/${props.id}`;
     const fetchPlaceItemUrl = process.env.NODE_ENV === 'production' ? prodPlaceItemUrl : devPlaceItemUrl;
 
     console.log(`\nAttaching auth.token from <AuthContext />:\n`, auth.token, `\n`);
@@ -53,7 +53,7 @@ const PlaceItem = (props) => {
   };
 
   const isProduction = process.env.NODE_ENV === 'production';
-  const imageHost = isProduction ? `https://little-mern-backend.onrender.com/` : `http://localhost:3011/`
+  const imageHost = isProduction ? `https://little-mern-nodejs-mongodb.onrender.com/` : `http://localhost:3011/`
 
   return (
     <React.Fragment>

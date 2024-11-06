@@ -13,7 +13,7 @@ const Users = () => {
     const fetchUsers = () => {
 
       const devFetchUserUrl = `http://localhost:3011/api/users`;
-      const prodFetchUserUrl = `https://little-mern-backend.onrender.com/api/users`;
+      const prodFetchUserUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/users`;
       const fetchUserUrl = process.env.NODE_ENV === 'production' ? prodFetchUserUrl : devFetchUserUrl
       
       sendRequest(fetchUserUrl)

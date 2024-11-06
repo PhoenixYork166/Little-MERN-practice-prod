@@ -48,7 +48,7 @@ const NewPlace = () => {
   const history = useHistory();
 
   const devPlaceUrl = `http://localhost:3011/api/places`;
-    const prodPlaceUrl = `https://little-mern-backend.onrender.com/api/places`;
+    const prodPlaceUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/places`;
     const fetchUrl = process.env.NODE_ENV === 'production' ? prodPlaceUrl : devPlaceUrl;
 
   const placeSubmitHandler = async (event) => {

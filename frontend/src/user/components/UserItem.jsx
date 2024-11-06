@@ -7,7 +7,7 @@ import './UserItem.css';
 
 const UserItem = props => {
   const isProduction = process.env.NODE_ENV === 'production';
-  const imageUrl = isProduction ? `https://little-mern-backend.onrender.com/` : `http://localhost:3011/`;
+  const imageUrl = isProduction ? `https://little-mern-nodejs-mongodb.onrender.com/` : `http://localhost:3011/`;
 
   return (
     <li className="user-item">

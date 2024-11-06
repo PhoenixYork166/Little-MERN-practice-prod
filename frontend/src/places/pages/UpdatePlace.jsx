@@ -37,7 +37,7 @@ const UpdatePlace = () => {
   );
 
   const devFetchPlaceUrl = `http://localhost:3011/api/places/${placeId}`;
-  const prodFetchPlaceUrl = `https://little-mern-backend.onrender.com/api/places/${placeId}`;
+  const prodFetchPlaceUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/places/${placeId}`;
 
   const fetchPlaceUrl = process.env.NODE_ENV === 'production' ? prodFetchPlaceUrl : devFetchPlaceUrl;
 

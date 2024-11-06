@@ -74,11 +74,11 @@ const Auth = () => {
     // console.log(formState.inputs); // console logging useForm custom hook inputs
 
     const devLoginUrl = `http://localhost:3011/api/users/login`;
-    const prodLoginUrl = `https://little-mern-backend.onrender.com/api/users/login`;
+    const prodLoginUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/users/login`;
     const fetchLoginUrl = process.env.NODE_ENV === 'production' ? prodLoginUrl : devLoginUrl;
 
     const devSignupUrl = `http://localhost:3011/api/users/signup`;
-    const prodSignupUrl = `https://little-mern-backend.onrender.com/api/users/signup`;
+    const prodSignupUrl = `https://little-mern-nodejs-mongodb.onrender.com/api/users/signup`;
     const fetchSignupUrl = process.env.NODE_ENV === 'production' ? prodSignupUrl : devSignupUrl;
 
     // Check isLoginMode true (Login mode) || false (Signup mode)
