@@ -11,7 +11,6 @@
     "react-scripts": "^5.0.1",
     "react-transition-group": "^4.3.0"
   },
-  "proxy": "https://little-mern-nodejs-mongodb.onrender.com",
   "scripts": {
     "start": "react-scripts start",
     "start:dev": "cross-env PORT=3020 react-scripts start",

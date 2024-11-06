@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const HttpError = require('../models/http-error');
 
-const rootDir = require('../util/path');
+const rootDir = require('./path');
 require('dotenv').config({ path: `${rootDir}/.env`});
 
 async function getCoordsForAddress(address) {
@@ -13,6 +13,8 @@ async function getCoordsForAddress(address) {
 
     const data = response.data;
 
+    console.log(`\nAPI_KEY:\n`, process.env.API_KEY, `\n`);
+
     // Logging for debugging purposes
     console.log(`\nResponse for src/util/location\ngetCoordsForAddress(${address}):\n`, data.results[0], `\n`);
 
@@ -22,6 +24,11 @@ async function getCoordsForAddress(address) {
     }
 
     const coordinates = data.results[0].geometry.location;
+
+    if (!coordinates) {
+      console.error(`\nFailed to retrieve Location coordinates: ${coordinates}\n`);
+    }
+    console.log(`\nbackend/util/location.js\ncoordinates:\n`, coordinates, `\n`);
 
     return coordinates;
   } catch (error) {

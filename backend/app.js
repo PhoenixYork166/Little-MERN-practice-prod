@@ -35,7 +35,7 @@ const corsOptions = {
       const allowedOrigins = ['http://localhost:3020', 'http://localhost:3000'];
 
       if (process.env.NODE_ENV === 'production') {
-          allowedOrigins.push('https://little-mern-react.onrender.com')
+          allowedOrigins.push('https://little-mern-react.onrender.com');
       }
       if (allowedOrigins.indexOf(origin) !== -1) {
           callback(null, true);
@@ -45,7 +45,7 @@ const corsOptions = {
   },
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204,
   credentials: true, // to support session cookies
-  methods: ['GET', 'POST', 'PUT', 'OPTIONS', 'HEAD'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));

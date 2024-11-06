@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const HttpError = require('../models/http-error');
 
-const rootDir = require('../util/path');
+const rootDir = require('./path');
 require('dotenv').config({ path: `${rootDir}/.env`});
 
 async function placeIdToImageUrl(placeId) {

@@ -162,10 +162,9 @@ exports.createPlace = async (req, res, next) => {
     coordinates = await getCoordsForAddress(address);
   } catch (err) {
     console.error(err.message);
+    console.error(`\ncoordinates:\n`, coordinates, `\n`);
     return next(new HttpError('Failed to find location for the provided address.', 500));
   }
-
-  console.error(`\ncoordinates:\n`, coordinates, `\n`);
 
   // Instantiate class Place{}
   const createdPlace = new Place({
