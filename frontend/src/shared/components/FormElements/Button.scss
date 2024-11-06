@@ -1,14 +1,19 @@
+@import '../../../sass/abstracts/_variables.scss';
+
 .button {
   font: inherit;
   padding: 0.5rem 1.5rem;
-  border: 1px solid #ff0055;
+  border: 1px solid $color-primary-light2;
   border-radius: 4px;
-  background: #ff0055;
+  // background: #ff0055;
+  background: $color-primary;
   color: white;
   cursor: pointer;
   margin-right: 1rem;
   text-decoration: none;
   display: inline-block;
+
+  transition: all .5s ease-in-out;
 }
 
 .button:focus {
@@ -17,19 +22,25 @@
 
 .button:hover,
 .button:active {
-  background: #ff4382;
-  border-color: #ff4382;
+  // background: #ff4382;
+  background: $color-primary-light;
+  border-color: $color-primary;
 }
 
 .button--inverse {
-  background: transparent;
-  color: #ff0055;
+  //background: transparent;
+  // color: #ff0055;
+  // color: $color-secondary;
+  background: $color-aqua;
+  color: $color-primary-dark;
 }
 
 .button--inverse:hover,
 .button--inverse:active {
-  color: white;
-  background: #ff0055;
+  color: $font-light;
+  background: $color-primary-light2;
+  // color: white;
+  // background: #ff0055;
 }
 
 .button--danger {

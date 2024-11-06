@@ -1,9 +1,10 @@
 import React from 'react';
 
-import './MainHeader.css';
+import '../../../sass/components/_frosted.scss';
+import './MainHeader.scss';
 
 const MainHeader = props => {
-  return <header className="main-header">{props.children}</header>;
+  return <header className="main-header frosted">{props.children}</header>;
 };
 
 export default MainHeader;

@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 
 import { validate } from '../../util/validators';
-import './Input.css';
+import './Input.scss';
 
 const inputReducer = (state, action) => {
   switch (action.type) {
@@ -22,7 +22,7 @@ const inputReducer = (state, action) => {
   }
 };
 
-const Input = props => {
+const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: props.initialValue || '',
     isTouched: false,
@@ -36,7 +36,7 @@ const Input = props => {
     onInput(id, value, isValid)
   }, [id, value, isValid, onInput]);
 
-  const changeHandler = event => {
+  const changeHandler = (event) => {
     dispatch({
       type: 'CHANGE',
       val: event.target.value,
@@ -77,7 +77,7 @@ const Input = props => {
     >
       <label htmlFor={props.id}>{props.label}</label>
       {element}
-      {!inputState.isValid && inputState.isTouched && <p>{props.errorText}</p>}
+      {!inputState.isValid && inputState.isTouched && <p className="errorText">{props.errorText}</p>}
     </div>
   );
 };

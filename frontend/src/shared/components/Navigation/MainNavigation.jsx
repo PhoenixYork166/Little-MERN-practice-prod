@@ -5,7 +5,8 @@ import MainHeader from './MainHeader';
 import NavLinks from './NavLinks';
 import SideDrawer from './SideDrawer';
 import Backdrop from '../UIElements/Backdrop';
-import './MainNavigation.css';
+import './MainNavigation.scss';
+import '../../../sass/components/_frosted.scss';
 
 const MainNavigation = props => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
@@ -22,7 +23,7 @@ const MainNavigation = props => {
     <React.Fragment>
       {drawerIsOpen && <Backdrop onClick={closeDrawerHandler} />}
       <SideDrawer show={drawerIsOpen} onClick={closeDrawerHandler}>
-        <nav className="main-navigation__drawer-nav">
+        <nav className="main-navigation__drawer-nav frosted">
           <NavLinks />
         </nav>
       </SideDrawer>
@@ -39,7 +40,7 @@ const MainNavigation = props => {
         <h1 className="main-navigation__title">
           <Link to="/">YourPlaces</Link>
         </h1>
-        <nav className="main-navigation__header-nav">
+        <nav className="main-navigation__header-nav frosted__children" >
           <NavLinks />
         </nav>
       </MainHeader>

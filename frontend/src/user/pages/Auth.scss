@@ -1,0 +1,22 @@
+@import '../../sass/abstracts/_variables.scss';
+
+// .authentication__header {
+//   color: white;
+//   text-align: center;
+// }
+
+.authentication {
+  width: 90%;
+  max-width: 25rem;
+  margin: 7rem auto;
+  text-align: center;
+
+  &__header {
+    text-align: center;
+    color: $font;
+  }
+}
+
+.authentication form {
+  margin-bottom: 1rem;
+}

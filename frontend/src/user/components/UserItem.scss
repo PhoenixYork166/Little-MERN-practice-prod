@@ -1,3 +1,5 @@
+@import '../../sass/abstracts/_variables.scss';
+
 .user-item {
   margin: 1rem;
   width: calc(45% - 2rem);
@@ -11,13 +13,17 @@
   height: 100%;
   text-decoration: none;
   padding: 1rem;
-  color: white;
+  // color: white;
+  color: $color-primary-dark;
   background: #292929;
+
+  transition: all .5s ease-in-out;
 }
 
 .user-item a:hover,
 .user-item a:active {
-  background: #ffd900;
+  // background: #ffd900;
+  background: $color-aqua;
 }
 
 .user-item__content {
@@ -34,7 +40,8 @@
   font-size: 1.5rem;
   margin: 0 0 0.5rem 0;
   font-weight: normal;
-  color: #ffd900;
+  // color: #ffd900;
+  color: $color-primary-dark;
 }
 
 .user-item:hover h2,

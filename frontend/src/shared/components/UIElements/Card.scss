@@ -1,3 +1,5 @@
+@import '../../../sass/abstracts/_variables.scss';
+
 .card {
   position: relative;
   margin: 0;
@@ -5,5 +7,7 @@
   border-radius: 6px;
   padding: 1rem;
   overflow: hidden;
-  background: white;
+  // background: white;
+  background: $color-primary;
+  color: $color-primary-dark;
 }

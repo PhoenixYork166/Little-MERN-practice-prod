@@ -15,7 +15,7 @@ import {
 import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
-import './PlaceForm.css';
+import './PlaceForm.scss';
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);

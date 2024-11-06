@@ -14,7 +14,7 @@ import {
 import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
-import './Auth.css';
+import './Auth.scss';
 import { isValid } from 'ipaddr.js';
 
 const Auth = () => {
@@ -137,7 +137,7 @@ const Auth = () => {
       <Card className="authentication">
         {/* asOverlay true by default */}
         {isLoading && <LoadingSpinner asOverlay />}
-        <h2>Login Required</h2>
+        <h2 className="authentication__header">Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
           {/* User to Sign Up  */}

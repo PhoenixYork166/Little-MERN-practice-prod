@@ -1,3 +1,5 @@
+@import '../../../sass/abstracts/_variables.scss';
+
 .main-navigation__menu-btn {
   width: 3rem;
   height: 3rem;
@@ -14,7 +16,8 @@
   display: block;
   width: 3rem;
   height: 2.5px;
-  background: white;
+  // background: white;
+  background: $font;
 }
 
 .main-navigation__title {
@@ -23,7 +26,8 @@
 
 .main-navigation__title a {
   text-decoration: none;
-  color: white;
+  // color: white;
+  color: $font;
 }
 
 .main-navigation__header-nav {

@@ -1,11 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+@import './sass/abstracts/_variables.scss';
 
-* {
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
+// * {
+//   box-sizing: border-box;
+// }
 
 html {
   font-family: 'Open Sans', sans-serif;
+  // font-size: 62.5%;
 }
 
 body {
@@ -39,4 +46,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.paragraph {
+  color: $font;
 }

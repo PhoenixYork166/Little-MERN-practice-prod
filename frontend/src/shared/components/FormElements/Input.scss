@@ -1,5 +1,12 @@
+@import '../../../sass/abstracts/_variables.scss';
+
 .form-control {
   margin: 1rem 0;
+}
+
+.errorText {
+  color: $font;
+  margin-top: 0.25rem;
 }
 
 .form-control label,
@@ -9,6 +16,7 @@
 }
 
 .form-control label {
+  color: $font;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
@@ -18,7 +26,8 @@
   width: 100%;
   font: inherit;
   border: 1px solid #ccc;
-  background: #f8f8f8;
+  // background: #f8f8f8;
+  background: $color-aqua;
   padding: 0.15rem 0.25rem;
 }
 
@@ -31,7 +40,8 @@
 
 .form-control--invalid label,
 .form-control--invalid p {
-  color: red;
+  // color: red;
+  color: $font;
 }
 
 .form-control--invalid input,

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import './ImageUpload.css';
+import './ImageUpload.scss';
 import Button from './Button';
 
 // Parent component
@@ -73,7 +73,7 @@ const ImageUpload = (props) => {
                 <div className={`image-upload ${props.center && 'center'}`}>
                     {/* Conditional rendering */}
                     {previewUrl && <img id="preview-url" src={previewUrl} alt="Preview" /> }
-                    {!previewUrl && <p>Please pick an image.</p>}
+                    {!previewUrl && <p className="paragraph">Please pick an image.</p>}
                 </div>
                 <Button 
                 type="button"
@@ -82,7 +82,7 @@ const ImageUpload = (props) => {
                     Pick Image
                 </Button>
             </div>
-            {!isValid && <p>{props.errorText}</p>}
+            {!isValid && <p className="errorText">{props.errorText}</p>}
         </React.Fragment>
     );
 };
