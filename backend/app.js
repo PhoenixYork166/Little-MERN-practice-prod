@@ -45,14 +45,29 @@ app.use(uploadImageErrorHandler);
 
 const port = process.env.PORT || 3011;
 
-mongoose
-  .connect(mongoose_uri)
+mongoose.connect(mongoose_uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    // useFindAndModify: false,
+    // useCreateIndex: true,
+    // writeConcern: {
+    //   w: "majority",
+    //   wtimeout: 10000
+    // }
+  })
+  .then(() => {
+    console.log(`\nmongoose_uri:\n`, mongoose_uri, `\n`);
+  })
   .then(() => {
     app.listen(port, () => {
       printDateTime();
       console.log(`\nNode app is up & running on port: ${port}\n`);
     });
   })
-  .catch(err => {
-    console.log(`Error starting Node app: ${err}\n`);
+  .catch((err) => {
+    console.error(`\nError starting Node app: ${err}\n`);
+
+    setTimeout(() => {
+      mongoose.connect(mongoose_uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    }, 5000); // Retry connection after 5 seconds
   });

@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "little-mern-nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -22,6 +22,7 @@
     "express-validator": "^6.15.0",
     "ipaddr.js": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.10.0",
     "mongoose": "^5.7.8",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0",
