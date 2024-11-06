@@ -13,6 +13,16 @@ npm install;
 npm start;
 ```
 
+<h2>Node.js backend/.env</h2>
+<h2>Adding your own .env file to backend/.env</h2>
+<h2>PORT=3011</h2>
+<h2>MONGODB_USERNAME=yourMongoDBAtlasUsername</h2>
+<h2>MONGODB_PASSWORD=yourMongoDBAtlasPassword</h2>
+<h2>API_KEY=yourGoogleMapAPIKey</h2>
+<h2>JWT_SECRET=yourCustomJWTSecret</h2>
+<h2>NODE_ENV=production</h2>
+<br/>
+
 ```bash
 cd backend;
 npm install;
