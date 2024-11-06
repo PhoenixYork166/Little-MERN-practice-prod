@@ -70,8 +70,8 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(`\nformState.inputs:`);
-    console.log(formState.inputs); // console logging useForm custom hook inputs
+    // console.log(`\nformState.inputs:`);
+    // console.log(formState.inputs); // console logging useForm custom hook inputs
 
     const devLoginUrl = `http://localhost:3011/api/users/login`;
     const prodLoginUrl = `https://little-mern-backend.onrender.com/api/users/login`;

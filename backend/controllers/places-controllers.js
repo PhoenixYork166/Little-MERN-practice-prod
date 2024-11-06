@@ -155,7 +155,7 @@ exports.createPlace = async (req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates;
   try {
@@ -174,12 +174,12 @@ exports.createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator
+    creator: req.userData.userId
   });
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
 
     if (!user) {
       const error = new HttpError('Could not find user for provided id.', 404);
@@ -189,8 +189,6 @@ exports.createPlace = async (req, res, next) => {
     console.error(err);
     return next(new HttpError('Creating place failed, please try again.', 500));
   }
-
-  // console.log(user);
 
   try {
     const sess = await mongoose.startSession();
@@ -230,6 +228,39 @@ exports.updatePlace = async (req, res, next) => {
     return res.status(422).json({ success: false, status: { code: 422 }, message: `Invalid inputs`});
   }
 
+  Place.findById(placeId)
+    .then((place) => {
+      if (!place) {
+        return res.status(500).json({ success: false, status: { code: 500 }, message: `Could not find a place for placeId: ${placeId}`});
+      }
+      
+      // JWT Authorization checks
+      if (place.creator.toString() !== req.userData.userId) {
+        return res.status(403).json({ success: false, status: { code: 403 }, message: `Forbidden to edit this place created by others`});
+      }
+
+      place.title = title;
+      place.description = description;
+
+      return place.save();
+    })
+    .then((updatedPlace) => {
+      return res.status(201).json({ 
+        success: true, 
+        status: { code: 201 }, 
+        place: updatedPlace.toObject({ getters: true}),
+        message: `Place has been updated.`
+      });
+    })
+    .catch((err) => {
+      console.error(`\nError in updating a place\nplaceId: ${placeId}\nError: ${err}\n`);
+      return res.status(501).json({
+        success: false,
+        status: { code: 501 },
+        message: `Failed to update a place - placeId: ${placeId}`
+      })
+    })
+  /* try{} catch {}
   let place;
   try {
     place = await Place.findById(placeId);
@@ -260,6 +291,7 @@ exports.updatePlace = async (req, res, next) => {
     place: place.toObject({ getters: true }),
     message: `Place has been updated.` 
   });
+  */
 };
 
 // DELETE http://localhost:3011/api/places/:pid
@@ -270,6 +302,61 @@ exports.deletePlace = async (req, res, next) => {
 
   const placeId = req.params.pid;
 
+  /* Promise chaining code */
+  Place.findById(placeId).populate('creator')
+  .then((place) => {
+    if (!place) {
+      return res.status(404).json({
+        success: false,
+        status: { code: 404 },
+        message: `Unable to find the place with placeId: ${placeId}`
+      });
+    }
+
+    // JWT Authorization checks
+    if (place.creator.id !== req.userData.userId) {
+      return res.status(403).json({
+        success: false,
+        status: { code: 403 },
+        message: `Not allowed to delete this place created by others.`
+      });
+    }
+
+    const sess = mongoose.startSession();
+    return sess.then((session) => {
+      session.startTransaction();
+        
+      return place.remove({ session: session })
+        .then(() => {
+          place.creator.places.pull(place);
+          
+          return place.creator.save({ session: session });
+        })
+        .then(() => session.commitTransaction())
+        .then(() => session.endSession())
+        .then(() => {
+          // Deleting the image from Node.js server inside backend/uploads/images
+          const imagePath = place.image;
+          fs.unlink(imagePath, (err) => {
+            if (err) {
+              console.error(`\nFailed to delete Image uploaded by User: ${place.creator}\nError: ${err}\n`);
+            }
+          });
+
+          return res.status(201).json({
+            success: true,
+            status: { code: 201 },
+            message: `Deleted place. placeId: ${placeId}`
+          });
+        });
+    });
+  })
+  .catch((err) => {
+      console.error(`\nError in deleting a place\nplaceId: ${placeId}\nError: ${err}\n`);
+      return res.status(501).json({ success: false, status: { code: 501 }, message: `Failed to delete the place with placeId: ${placeId}`});
+  });
+
+  /* try{} catch{}
   let place;
   try {
     // .populate('creator') creator field holds the full user{}
@@ -283,6 +370,7 @@ exports.deletePlace = async (req, res, next) => {
     return next(new HttpError('Could not find place for this id.', 404));
   }
 
+  // JWT Authorization checks
   if (place.creator.id !== req.userData.userId) {
     return res.status(403).json({ success: false, status: { code: 403 }, message: `Not allowed to delete this place created by others.`})
   }
@@ -310,4 +398,5 @@ exports.deletePlace = async (req, res, next) => {
     status: { code: 201 },
     message: `Deleted place. placeId: ${placeId}` 
   });
+  */
 };

@@ -59,14 +59,14 @@ const NewPlace = () => {
       formData.append('title', formState.inputs.title.value);
       formData.append('description', formState.inputs.description.value);
       formData.append('address', formState.inputs.address.value);
-      formData.append('creator', auth.userId);
+      // formData.append('creator', auth.userId);
       formData.append('image', formState.inputs.image.value);
           
       /* Logging formData key-value pairs */
       for (let [key, value] of formData.entries()) {
         console.log(`\nformData:\n`, key, value);
-      }     
-      
+      }
+
       console.log(`\nAttaching auth.token from <AuthContext />:\n`, auth.token, `\n`);
       console.log(`\n\n`,`Bearer ${auth.token}`, `\n\n`);
 

@@ -19,6 +19,9 @@ npm install;
 npm start;
 ```
 
+<h2>SPA Authen Illustration</h2>
+<img src="./assets//Diagrams-App3-SPA-Authen.drawio.png" alt="spa-authen" />
+<br/>
 <h2>Users can upload their profile pic during 'Sign Up'</h2>
 <br/>
 <h2>Data-flow illustrations for React <Auth /> 'Sign Up' vs 'Login'</h2>
