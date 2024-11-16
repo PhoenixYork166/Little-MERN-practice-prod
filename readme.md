@@ -1,3 +1,5 @@
+<h2>Learning React clean code from Maximilian Schwarzmüller</h2>
+<br />
 <h2>Little MERN project</h2>
 <br/>
 <img src="./assets//Mern-stack-developer.webp" alt="mern" />
